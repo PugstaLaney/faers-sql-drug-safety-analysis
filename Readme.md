@@ -15,7 +15,7 @@ Inspect the schema and relationships
 Perform exploratory analysis using SQL and Jupyter notebooks
 
 The goal of this project is to practice SQL-based data analysis on a real-world dataset containing millions of adverse event reports.
-
+```
 Project Structure
 faers-sql-drug-safety-analysis
 │
@@ -33,5 +33,5 @@ faers-sql-drug-safety-analysis
 │   └── explore_faers_schema.ipynb
 │
 └── .gitignore
-
+```
 Large datasets, generated database files, and outputs are excluded from version control.
