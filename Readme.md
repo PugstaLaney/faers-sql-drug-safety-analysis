@@ -119,28 +119,32 @@ Note: FAERS is a spontaneous reporting system. Signals identified here do **not 
 
 ---
 
-# Project Structure
+## Project Structure
+
+```
 faers-sql-drug-safety-analysis
 │
 ├── scripts
-│ ├── build_database.py
-│ ├── build_severity_database.py
-│ └── export_db_samples.py
+│   ├── build_database.py
+│   ├── build_severity_database.py
+│   └── export_db_samples.py
 │
 ├── sql
-│ ├── schema_inspection.sql
-│ ├── basic_counts.sql
-│ ├── first_analysis.sql
-│ └── build_faers_severity_dataset_table.sql
+│   ├── schema_inspection.sql
+│   ├── basic_counts.sql
+│   ├── first_analysis.sql
+│   └── build_faers_severity_dataset_table.sql
 │
 ├── notebooks
-│ ├── explore_faers_schema.ipynb
-│ └── faers_severity_analysis.ipynb
+│   ├── explore_faers_schema.ipynb
+│   └── faers_severity_analysis.ipynb
 │
 ├── database
-│ └── faers.db
+│   └── faers.db
 │
 └── .gitignore
+```
+
 
 Large datasets, generated database files, and output artifacts are excluded from version control.
 
