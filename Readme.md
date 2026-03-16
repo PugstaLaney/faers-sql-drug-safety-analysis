@@ -1,65 +1,10 @@
-# FAERS SQL Drug Safety Analysis
+# Fluorouracil FAERS Safety Analysis
 
-This project builds a relational database from the **FDA Adverse Event Reporting System (FAERS)** quarterly datasets and performs exploratory pharmacovigilance analysis using **SQL, Python, and Jupyter notebooks**.
+This project analyzes adverse event reports associated with **Fluorouracil (5-FU)** using data from the **FDA Adverse Event Reporting System (FAERS)**.
 
-The workflow demonstrates a data science pipeline for working with large public health datasets containing **millions of adverse event reports**.
+The goal is to explore how different **Fluorouracil drug combinations** appear in adverse event reports and examine their associated safety outcomes using **SQL, Python, and Jupyter notebooks**.
 
----
-
-# Project Goals
-
-This project was built to practice:
-
-- SQL-based analysis on large relational datasets
-- Data engineering with Python and SQLite
-- Exploratory pharmacovigilance analysis
-- Statistical signal detection methods used in drug safety monitoring
-
----
-
-# Data Pipeline Overview
-
-The analysis pipeline follows these steps:
-
-1. **Download FAERS quarterly ASCII datasets**
-
-2. **Parse and ingest files using Python**
-
-3. **Build a consolidated SQLite database**
-
-4. **Perform feature engineering using SQL**
-
-5. **Analyze drug safety signals using Python and Jupyter notebooks**
-
-The final dataset contains **millions of report–drug pairs** derived from the FAERS reporting system.
-
----
-
-# Pharmacovigilance Analysis
-
-The project implements a **Reporting Odds Ratio (ROR)** analysis to detect potential safety signals.
-
-The Reporting Odds Ratio is a common method used in pharmacovigilance systems such as:
-
-- FAERS
-- EudraVigilance
-- WHO VigiBase
-
-ROR compares the odds of a serious adverse event for a specific drug against the background reporting rate for all other drugs.
-
-Contingency table structure:
-
-|                | Serious | Non-Serious |
-|---------------|--------|-------------|
-| Drug          | a      | b           |
-| Other drugs   | c      | d           |
-
-ROR is calculated as:
-# FAERS SQL Drug Safety Analysis
-
-This project builds a relational database from the **FDA Adverse Event Reporting System (FAERS)** quarterly datasets and performs exploratory pharmacovigilance analysis using **SQL, Python, and Jupyter notebooks**.
-
-The workflow demonstrates a data science pipeline for working with large public health datasets containing **millions of adverse event reports**.
+The project demonstrates how large pharmacovigilance datasets can be filtered, cleaned, and analyzed to investigate potential safety signals.
 
 ---
 
@@ -67,116 +12,151 @@ The workflow demonstrates a data science pipeline for working with large public 
 
 This project was built to practice:
 
-- SQL-based analysis on large relational datasets
-- Data engineering with Python and SQLite
+- Working with large public health datasets
+- SQL analysis on relational medical data
+- Data cleaning and normalization of drug labels
 - Exploratory pharmacovigilance analysis
-- Statistical signal detection methods used in drug safety monitoring
+- Class balancing techniques for modeling
+- Data visualization with Python
 
 ---
 
-# Data Pipeline Overview
+# Dataset
 
-The analysis pipeline follows these steps:
+The data comes from the **FDA Adverse Event Reporting System (FAERS)**.
 
-1. **Download FAERS quarterly ASCII datasets**
+FAERS is a spontaneous reporting system containing millions of adverse event reports submitted by:
 
-2. **Parse and ingest files using Python**
+- Healthcare professionals
+- Pharmaceutical companies
+- Patients and caregivers
 
-3. **Build a consolidated SQLite database**
+Source:
 
-4. **Perform feature engineering using SQL**
+https://www.fda.gov/drugs/fda-adverse-event-reporting-system-faers
 
-5. **Analyze drug safety signals using Python and Jupyter notebooks**
+**Important note**
 
-The final dataset contains **millions of report–drug pairs** derived from the FAERS reporting system.
-
----
-
-# Pharmacovigilance Analysis
-
-The project implements a **Reporting Odds Ratio (ROR)** analysis to detect potential safety signals.
-
-The Reporting Odds Ratio is a common method used in pharmacovigilance systems such as:
-
-- FAERS
-- EudraVigilance
-- WHO VigiBase
-
-ROR compares the odds of a serious adverse event for a specific drug against the background reporting rate for all other drugs.
-
-Contingency table structure:
-
-|                | Serious | Non-Serious |
-|---------------|--------|-------------|
-| Drug          | a      | b           |
-| Other drugs   | c      | d           |
-
-ROR is calculated as:
-ROR = (a * d) / (b * c)
-Values greater than 1 may indicate a potential safety signal.
-
-Note: FAERS is a spontaneous reporting system. Signals identified here do **not imply causation** and require further investigation.
+FAERS data contains **reported associations**, not confirmed causal relationships.
 
 ---
 
-## Project Structure
+# Analysis Focus
+
+This project focuses specifically on **Fluorouracil-containing therapies**.
+
+The workflow isolates reports containing drug labels with:
+
+
+FLUOROURACIL
+
+
+These labels include:
+
+- Fluorouracil monotherapy
+- Fluorouracil combination regimens
+- Multi-drug chemotherapy protocols
+
+Examples found in the dataset include:
+
+
+FLUOROURACIL
+FLUOROURACIL\LEUCOVORIN
+FLUOROURACIL\OXALIPLATIN
+FLUOROURACIL\IRINOTECAN
+FLUOROURACIL\IRINOTECAN\LEUCOVORIN\OXALIPLATIN
+
+
+---
+
+# Data Processing Steps
+
+The analysis pipeline includes:
+
+1. Build a relational SQLite database from FAERS quarterly datasets  
+2. Filter reports containing Fluorouracil drug labels  
+3. Identify common drug combinations  
+4. Remove extremely rare labels  
+5. Downsample large groups to balance the dataset  
+
+Balanced sampling ensures that regression and comparative analyses are not dominated by the most common label (Fluorouracil monotherapy).
+
+---
+
+# Downsampling Strategy
+
+FAERS reporting is highly imbalanced.
+
+Example distribution:
+
+
+FLUOROURACIL: thousands of reports
+Combination therapies: tens to hundreds of reports
+
+
+To allow fair comparisons between drug mixtures, the dataset is **downsampled** so each drug group contains the same number of reports.
+
+Groups with fewer than **55 reports** are removed.
+
+Remaining groups are randomly sampled to **55 reports per drug label**.
+
+This produces a balanced dataset suitable for exploratory modeling.
+
+---
+
+# Example Analyses
+
+Possible analyses performed on the dataset include:
+
+- Comparison of adverse reaction profiles across drug combinations
+- Frequency analysis of reported toxicities
+- Serious outcome rates across chemotherapy regimens
+- Logistic regression modeling of severe adverse events
+
+These analyses demonstrate how pharmacovigilance datasets can be used to investigate drug safety signals.
+
+---
+
+# Project Structure
 
 ```
-faers-sql-drug-safety-analysis
-│
-├── scripts
-│   ├── build_database.py
-│   ├── build_severity_database.py
-│   └── export_db_samples.py
-│
-├── sql
-│   ├── schema_inspection.sql
-│   ├── basic_counts.sql
-│   ├── first_analysis.sql
-│   └── build_faers_severity_dataset_table.sql
+fluorouracil-faers-analysis
 │
 ├── notebooks
-│   ├── explore_faers_schema.ipynb
-│   └── faers_severity_analysis.ipynb
+│ ├── explore_faers_schema.ipynb
+│ └── fluorouracil_analysis.ipynb
 │
 ├── database
-│   └── faers.db
+│ └── faers.db
 │
-└── .gitignore
+├── scripts
+│ └── build_database.py
+│
+└── README.md
 ```
 
-
-Large datasets, generated database files, and output artifacts are excluded from version control.
+Large database files are excluded from version control.
 
 ---
 
 # Technologies Used
 
 - Python
-- SQLite
 - SQL
+- SQLite
 - Pandas
+- Matplotlib
 - Jupyter Notebook
 - Git / GitHub
 
 ---
 
-# Dataset
+# Future Work
 
-FAERS data is provided by the **U.S. Food and Drug Administration (FDA)**.
+Potential extensions to the analysis include:
 
-Source:
-
-https://www.fda.gov/drugs/fda-adverse-event-reporting-system-faers
-
----
-
-# Future Improvements
-
-Potential extensions to this project include:
-
-- Confidence intervals for Reporting Odds Ratios
-- Filtering analyses to **Primary Suspect drugs**
 - Reaction-level signal detection
+- Reporting Odds Ratio (ROR) calculations
 - Visualization of adverse event networks
-- Machine learning models predicting serious outcomes
+- Clustering of toxicity profiles across chemotherapy regimens
+- Predictive modeling of serious outcomes
