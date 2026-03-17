@@ -67,6 +67,8 @@ FLUOROURACIL\IRINOTECAN
 FLUOROURACIL\IRINOTECAN\LEUCOVORIN\OXALIPLATIN
 
 
+The analysis integrates adverse reaction data with filtered Fluorouracil report groups by joining REAC and DRUG tables on report identifiers. Aggregated SQL queries were used to compute symptom frequencies for each drug combination, alongside quarterly report trends. Results were visualized using bar charts and normalized heatmaps to compare symptom distributions across regimens.
+
 ---
 
 # Data Processing Steps
