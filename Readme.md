@@ -1,10 +1,10 @@
-# Fluorouracil FAERS Safety Analysis
+# Fluorouracil and Metformin FAERS Safety Analysis
 
-This project analyzes adverse event reports associated with **Fluorouracil (5-FU)** using data from the **FDA Adverse Event Reporting System (FAERS)**.
+This project analyzes adverse event reports associated with **Fluorouracil (5-FU)** and **Metformin** using data from the **FDA Adverse Event Reporting System (FAERS)**.
 
-The goal is to explore how different **Fluorouracil drug combinations** appear in adverse event reports and examine their associated safety outcomes using **SQL, Python, and Jupyter notebooks**.
+The current goal is to explore how different **Fluorouracil drug combinations** and **Metformin drug combinations** appear in adverse event reports and examine their associated safety outcomes using **SQL, Python, and Jupyter notebooks**.
 
-The project demonstrates how large pharmacovigilance datasets can be filtered, cleaned, and analyzed to investigate potential safety signals.
+The project demonstrates how large pharmacovigilance datasets can be filtered, cleaned, and analyzed to investigate potential safety signals. This is a learning project for complex SQL queries and python EDA. More advanced statistical analysis and ML are planned.
 
 ---
 
@@ -43,12 +43,12 @@ FAERS data contains **reported associations**, not confirmed causal relationship
 
 # Analysis Focus
 
-This project focuses specifically on **Fluorouracil-containing therapies**.
+This project focuses specifically on **Fluorouracil-containing therapies, and Metforming-containing therapies**.
 
 The workflow isolates reports containing drug labels with:
 
-
 FLUOROURACIL
+METFORMIN
 
 
 These labels include:
@@ -66,8 +66,19 @@ FLUOROURACIL\OXALIPLATIN
 FLUOROURACIL\IRINOTECAN
 FLUOROURACIL\IRINOTECAN\LEUCOVORIN\OXALIPLATIN
 
+METFORMIN
+METFORMIN HYDROCHLORIDE
+METFORMIN\SITAGLIPTIN
+METFORMIN HYDROCHLORIDE\VILDAGLIPTIN
+METFORMIN HYDROCHLORIDE\SITAGLIPTIN PHOSPHATE
+EMPAGLIFLOZIN\METFORMIN HYDROCHLORIDE
+METFORMIN PAMOATE
+CANAGLIFLOZIN\METFORMIN HYDROCHLORIDE
+DAPAGLIFLOZIN PROPANEDIOL\METFORMIN HYDROCHLORIDE
 
-The analysis integrates adverse reaction data with filtered Fluorouracil report groups by joining REAC and DRUG tables on report identifiers. Aggregated SQL queries were used to compute symptom frequencies for each drug combination, alongside quarterly report trends. Results were visualized using bar charts and normalized heatmaps to compare symptom distributions across regimens.
+
+
+The analysis integrates adverse reaction data with filtered Fluorouracil/Metform report groups by joining REAC and DRUG tables on report identifiers. Aggregated SQL queries were used to compute symptom frequencies for each drug combination, alongside quarterly report trends. Results were visualized using bar charts and normalized heatmaps to compare symptom distributions across regimens.
 
 ---
 
@@ -85,7 +96,7 @@ Balanced sampling ensures that regression and comparative analyses are not domin
 
 ---
 
-# Downsampling Strategy
+# Downsampling Strategy - Still in progress----
 
 FAERS reporting is highly imbalanced.
 
