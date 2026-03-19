@@ -96,7 +96,7 @@ Balanced sampling ensures that regression and comparative analyses are not domin
 
 ---
 
-# Downsampling Strategy - Still in progress----
+# Downsampling Strategy for future ML - Still in progress----
 
 FAERS reporting is highly imbalanced.
 
