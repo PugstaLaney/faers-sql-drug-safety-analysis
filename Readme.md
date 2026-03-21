@@ -1,10 +1,10 @@
-# Fluorouracil and Metformin FAERS Safety Analysis
+# FAERS Pharmacovigilance Analysis — Colorectal Cancer, Fluorouracil, and Metformin
 
-This project analyzes adverse event reports associated with **Fluorouracil (5-FU)** and **Metformin** using data from the **FDA Adverse Event Reporting System (FAERS)**.
+This project analyzes adverse event reports from the **FDA Adverse Event Reporting System (FAERS)** with a focus on **colorectal and appendiceal cancer patients**, **Fluorouracil (5-FU)-containing chemotherapy regimens**, and **Metformin-containing therapies**.
 
-The current goal is to explore how different **Fluorouracil drug combinations** and **Metformin drug combinations** appear in adverse event reports and examine their associated safety outcomes using **SQL, Python, and Jupyter notebooks**.
+The current goal is to explore how drug indication filtering, drug combination analysis, and adverse reaction profiling can be combined to investigate safety signals in oncology and diabetes pharmacovigilance using **SQL, Python, and Jupyter notebooks**.
 
-The project demonstrates how large pharmacovigilance datasets can be filtered, cleaned, and analyzed to investigate potential safety signals. This is a learning project for complex SQL queries and python EDA. More advanced statistical analysis and ML are planned.
+The project demonstrates how large public health datasets can be filtered, cleaned, and analyzed to investigate potential safety signals. This is a learning project for complex SQL queries and Python EDA. More advanced statistical analysis and ML are planned.
 
 ---
 
@@ -43,42 +43,34 @@ FAERS data contains **reported associations**, not confirmed causal relationship
 
 # Analysis Focus
 
-This project focuses specifically on **Fluorouracil-containing therapies, and Metforming-containing therapies**.
+This project covers three areas of analysis:
 
-The workflow isolates reports containing drug labels with:
+**1. Colorectal and Appendiceal Cancer Population**
 
-FLUOROURACIL
-METFORMIN
+Reports are isolated using the FAERS `indi` table, filtering by cancer-related MedDRA indication terms including:
 
+- Colon cancer / Colorectal cancer (all stages)
+- Colon cancer metastatic / Colorectal cancer metastatic
+- Malignant peritoneal neoplasm / Metastases to peritoneum
+- Pseudomyxoma peritonei
+- Mucinous adenocarcinoma of appendix
 
-These labels include:
+Within this population, the top drugs, adverse reactions, and serious outcomes are analyzed across core chemotherapy regimens (FOLFOX, FOLFIRI, CAPOX) and targeted therapies (Bevacizumab, Cetuximab, Panitumumab).
+
+**2. Fluorouracil-Containing Therapies**
+
+The workflow isolates reports containing Fluorouracil drug labels including:
 
 - Fluorouracil monotherapy
-- Fluorouracil combination regimens
-- Multi-drug chemotherapy protocols
+- Fluorouracil combination regimens (FOLFOX, FOLFIRI, FOLFIRINOX)
 
-Examples found in the dataset include:
+Drug name normalization is applied to consolidate brand and generic name variants before analysis.
 
+**3. Metformin-Containing Therapies**
 
-FLUOROURACIL
-FLUOROURACIL\LEUCOVORIN
-FLUOROURACIL\OXALIPLATIN
-FLUOROURACIL\IRINOTECAN
-FLUOROURACIL\IRINOTECAN\LEUCOVORIN\OXALIPLATIN
+Metformin name variants are identified and grouped. Adverse reaction profiles are compared across formulations and combinations including Metformin monotherapy, Metformin/Sitagliptin, Metformin/Vildagliptin, and Empagliflozin/Metformin.
 
-METFORMIN
-METFORMIN HYDROCHLORIDE
-METFORMIN\SITAGLIPTIN
-METFORMIN HYDROCHLORIDE\VILDAGLIPTIN
-METFORMIN HYDROCHLORIDE\SITAGLIPTIN PHOSPHATE
-EMPAGLIFLOZIN\METFORMIN HYDROCHLORIDE
-METFORMIN PAMOATE
-CANAGLIFLOZIN\METFORMIN HYDROCHLORIDE
-DAPAGLIFLOZIN PROPANEDIOL\METFORMIN HYDROCHLORIDE
-
-
-
-The analysis integrates adverse reaction data with filtered Fluorouracil/Metform report groups by joining REAC and DRUG tables on report identifiers. Aggregated SQL queries were used to compute symptom frequencies for each drug combination, alongside quarterly report trends. Results were visualized using bar charts and normalized heatmaps to compare symptom distributions across regimens.
+Results across all analyses are visualized using bar charts and normalized heatmaps to compare symptom distributions across drug groups.
 
 ---
 
@@ -86,13 +78,17 @@ The analysis integrates adverse reaction data with filtered Fluorouracil/Metform
 
 The analysis pipeline includes:
 
-1. Build a relational SQLite database from FAERS quarterly datasets  
-2. Filter reports containing Fluorouracil drug labels  
-3. Identify common drug combinations  
-4. Remove extremely rare labels  
-5. Downsample large groups to balance the dataset  
+1. Build a relational SQLite database from FAERS 2024 quarterly datasets (Q1–Q4)
+2. Explore schema and validate table row counts and column types
+3. Filter reports by drug name using keyword search (LIKE pattern matching)
+4. Filter reports by cancer indication using the `indi` table and MedDRA terms
+5. Normalize drug names — map brand names and salt variants to a single standard name
+6. Join drug, reaction, indication, and outcome tables on `primaryid`
+7. Aggregate reaction and outcome frequencies using GROUP BY and window functions
+8. Remove noise indication terms (peritonitis, appendicitis, peritoneal dialysis)
+9. Downsample large drug groups to balance the dataset for future ML modeling
 
-Balanced sampling ensures that regression and comparative analyses are not dominated by the most common label (Fluorouracil monotherapy).
+Balanced sampling ensures that regression and comparative analyses are not dominated by the most common drug label.
 
 ---
 
@@ -133,17 +129,32 @@ These analyses demonstrate how pharmacovigilance datasets can be used to investi
 # Project Structure
 
 ```
-fluorouracil-faers-analysis
+FDA_FAERS
 │
 ├── notebooks
-│ ├── explore_faers_schema.ipynb
-│ └── fluorouracil_analysis.ipynb
+│   ├── explore_faers_schema.ipynb        # Schema overview and table validation
+│   ├── appendiceal_indication.ipynb      # Cancer indication filtering and drug/reaction analysis
+│   ├── 5_FU_explore.ipynb                # Fluorouracil adverse event EDA
+│   ├── 5_FU_ML.ipynb                     # Fluorouracil ML modeling (in progress)
+│   └── Metformin_explore.ipynb           # Metformin adverse event EDA
 │
 ├── database
-│ └── faers.db
+│   └── faers.db                          # SQLite database (excluded from version control)
 │
-├── scripts
-│ └── build_database.py
+├── data
+│   ├── Dataset ASCII Downloads/          # Raw FAERS quarterly zip files (Q1-Q4 2024)
+│   └── Dataset ASCII Extracts/           # Extracted quarterly txt files
+│
+├── python
+│   ├── build_database.py                 # Builds SQLite database from raw FAERS files
+│   ├── export_db_samples.py              # Exports sample CSVs for each table
+│   └── inspect_data.py                   # Data inspection utilities
+│
+├── outputs
+│   └── db_sample_review/                 # Sample CSVs for each table
+│
+├── sql
+│   └── schema_inspection.sql             # SQL schema inspection queries
 │
 └── README.md
 ```
@@ -166,10 +177,13 @@ Large database files are excluded from version control.
 
 # Future Work
 
-Potential extensions to the analysis include:
+Planned extensions to the analysis include:
 
-- Reaction-level signal detection
-- Reporting Odds Ratio (ROR) calculations
-- Visualization of adverse event networks
+- Reporting Odds Ratio (ROR) calculations for formal signal detection
+- Demographic analysis — age, sex, and country breakdowns within cancer population
+- Dechallenge/rechallenge analysis for causal signal strength
+- Quarterly trend analysis using LAG window functions
+- Seaborn visualizations for drug-reaction heatmaps
 - Clustering of toxicity profiles across chemotherapy regimens
-- Predictive modeling of serious outcomes
+- Logistic regression modeling of serious outcomes (DE, HO, LT)
+- Class balancing and predictive modeling in 5_FU_ML.ipynb
