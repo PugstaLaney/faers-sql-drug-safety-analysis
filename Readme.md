@@ -1,189 +1,136 @@
-# FAERS Pharmacovigilance Analysis — Colorectal Cancer, Fluorouracil, and Metformin
+# FDA FAERS Pharmacovigilance Analysis — Colorectal & Appendiceal Cancer
 
-This project analyzes adverse event reports from the **FDA Adverse Event Reporting System (FAERS)** with a focus on **colorectal and appendiceal cancer patients**, **Fluorouracil (5-FU)-containing chemotherapy regimens**, and **Metformin-containing therapies**.
-
-The current goal is to explore how drug indication filtering, drug combination analysis, and adverse reaction profiling can be combined to investigate safety signals in oncology and diabetes pharmacovigilance using **SQL, Python, and Jupyter notebooks**.
-
-The project demonstrates how large public health datasets can be filtered, cleaned, and analyzed to investigate potential safety signals. This is a learning project for complex SQL queries and Python EDA. More advanced statistical analysis and ML are planned.
+Analysis of real-world adverse event data from the **FDA Adverse Event Reporting System (FAERS)** focused on colorectal and appendiceal cancer patients, their chemotherapy regimens, and comorbidity-related drug exposures. Built on the full 2024 FAERS dataset (Q1–Q4) using SQL, Python, and Jupyter notebooks.
 
 ---
 
-# Project Goals
+## Background & Motivation
 
-This project was built to practice:
+Colorectal and appendiceal cancers share core chemotherapy regimens — primarily fluorouracil-based combinations (FOLFOX, FOLFIRI, FOLFIRINOX) and, in peritoneal disease, HIPEC protocols using oxaliplatin or mitomycin C. Despite extensive clinical trial data on efficacy, real-world adverse event profiles in spontaneous reporting databases like FAERS offer a complementary signal — capturing drug combinations, indication patterns, and outcomes at population scale.
 
-- Working with large public health datasets
-- SQL analysis on relational medical data
-- Data cleaning and normalization of drug labels
-- Exploratory pharmacovigilance analysis
-- Class balancing techniques for modeling
-- Data visualization with Python
+This project applies pharmacovigilance methods to characterize the adverse event burden in this patient population, with analytical angles spanning chemotherapy toxicity, off-label prescribing, serious outcomes, and comorbidity drug exposures.
+
+> **Note:** FAERS data represents *reported associations*, not confirmed causal relationships. All findings should be interpreted in the context of spontaneous reporting limitations.
 
 ---
 
-# Dataset
+## Key Findings
 
-The data comes from the **FDA Adverse Event Reporting System (FAERS)**.
+- **13,000+ fluorouracil drug records** were identified across 2024 FAERS, requiring normalization of **33 distinct drug name variants** before analysis — illustrating the data quality challenges inherent to spontaneous reporting databases.
 
-FAERS is a spontaneous reporting system containing millions of adverse event reports submitted by:
+- **Diarrhoea and neutropenia** were the most consistently reported adverse events across all fluorouracil-containing regimens (monotherapy and combinations), with diarrhoea accounting for 806 total reports — consistent with the known toxicity profile and validating the signal detection approach.
 
-- Healthcare professionals
-- Pharmaceutical companies
-- Patients and caregivers
+- **"Off-label use" ranked 2nd** among all reported events for fluorouracil (698 reports), representing a clinically meaningful pharmacovigilance signal worth further investigation.
 
-Source:
+- **Fluorouracil carried the highest hospitalization burden** among all chemotherapy drugs analyzed in the cancer population — 590 hospitalization outcomes vs. 127 deaths — more than bevacizumab, capecitabine, or irinotecan.
 
-https://www.fda.gov/drugs/fda-adverse-event-reporting-system-faers
+- **Appendiceal cancer-specific indications** (mucinous adenocarcinoma of appendix, pseudomyxoma peritonei) generated fewer than 12 adverse event reports each across the entire 2024 dataset — confirming the rarity of these diagnoses even at national reporting scale, and highlighting the limits of FAERS for orphan oncology indications.
 
-**Important note**
-
-FAERS data contains **reported associations**, not confirmed causal relationships.
+- **Neuropathy peripheral** appeared prominently in both fluorouracil and oxaliplatin reports — expected given their combined use in FOLFOX, and a relevant finding for HIPEC protocols that also employ oxaliplatin.
 
 ---
 
-# Analysis Focus
+## Analysis Angles
 
-This project covers three areas of analysis:
+**1. Colorectal & Appendiceal Cancer Population**
 
-**1. Colorectal and Appendiceal Cancer Population**
-
-Reports are isolated using the FAERS `indi` table, filtering by cancer-related MedDRA indication terms including:
-
-- Colon cancer / Colorectal cancer (all stages)
-- Colon cancer metastatic / Colorectal cancer metastatic
+Reports filtered using cancer-related MedDRA indication terms from the `indi` table, including:
+- Colon cancer / Colorectal cancer (all stages and metastatic variants)
 - Malignant peritoneal neoplasm / Metastases to peritoneum
-- Pseudomyxoma peritonei
-- Mucinous adenocarcinoma of appendix
+- Pseudomyxoma peritonei / Mucinous adenocarcinoma of appendix
 
-Within this population, the top drugs, adverse reactions, and serious outcomes are analyzed across core chemotherapy regimens (FOLFOX, FOLFIRI, CAPOX) and targeted therapies (Bevacizumab, Cetuximab, Panitumumab).
+Within this population: top drugs by report volume, adverse reaction frequencies, serious outcome distributions, and per-drug toxicity comparisons across FOLFOX, FOLFIRI, and targeted therapies (bevacizumab, cetuximab, panitumumab).
 
-**2. Fluorouracil-Containing Therapies**
+**2. Fluorouracil-Containing Regimens**
 
-The workflow isolates reports containing Fluorouracil drug labels including:
-
+Drug name normalization applied to consolidate 33+ brand, generic, and combination variants. Adverse reaction profiles compared across:
 - Fluorouracil monotherapy
-- Fluorouracil combination regimens (FOLFOX, FOLFIRI, FOLFIRINOX)
+- FOLFOX (Fluorouracil + Leucovorin + Oxaliplatin)
+- FOLFIRI (Fluorouracil + Irinotecan + Leucovorin)
+- FOLFIRINOX (Fluorouracil + Irinotecan + Leucovorin + Oxaliplatin)
 
-Drug name normalization is applied to consolidate brand and generic name variants before analysis.
+**3. Metformin as a Comorbidity Drug**
 
-**3. Metformin-Containing Therapies**
+Diabetes is a common comorbidity in colorectal cancer patients. Metformin name variants identified and grouped; adverse reaction profiles compared across formulations and combinations (monotherapy, Metformin/Sitagliptin, Empagliflozin/Metformin) to characterize safety signals in this overlapping population.
 
-Metformin name variants are identified and grouped. Adverse reaction profiles are compared across formulations and combinations including Metformin monotherapy, Metformin/Sitagliptin, Metformin/Vildagliptin, and Empagliflozin/Metformin.
+**4. HIPEC Agents (Planned)**
 
-Results across all analyses are visualized using bar charts and normalized heatmaps to compare symptom distributions across drug groups.
-
----
-
-# Data Processing Steps
-
-The analysis pipeline includes:
-
-1. Build a relational SQLite database from FAERS 2024 quarterly datasets (Q1–Q4)
-2. Explore schema and validate table row counts and column types
-3. Filter reports by drug name using keyword search (LIKE pattern matching)
-4. Filter reports by cancer indication using the `indi` table and MedDRA terms
-5. Normalize drug names — map brand names and salt variants to a single standard name
-6. Join drug, reaction, indication, and outcome tables on `primaryid`
-7. Aggregate reaction and outcome frequencies using GROUP BY and window functions
-8. Remove noise indication terms (peritonitis, appendicitis, peritoneal dialysis)
-9. Downsample large drug groups to balance the dataset for future ML modeling
-
-Balanced sampling ensures that regression and comparative analyses are not dominated by the most common drug label.
+Oxaliplatin and mitomycin C are the primary agents used in hyperthermic intraperitoneal chemotherapy (HIPEC) for peritoneal disease from appendiceal and colorectal primaries. Adverse event profiling for these agents within the peritoneal malignancy indication subgroup is planned.
 
 ---
 
-# Downsampling Strategy for future ML - Still in progress----
+## Data Processing Pipeline
 
-FAERS reporting is highly imbalanced.
-
-Example distribution:
-
-
-FLUOROURACIL: thousands of reports
-Combination therapies: tens to hundreds of reports
-
-
-To allow fair comparisons between drug mixtures, the dataset is **downsampled** so each drug group contains the same number of reports.
-
-Groups with fewer than **55 reports** are removed.
-
-Remaining groups are randomly sampled to **55 reports per drug label**.
-
-This produces a balanced dataset suitable for exploratory modeling.
+1. Build a relational SQLite database from FAERS 2024 quarterly ASCII datasets (Q1–Q4)
+2. Validate schema: row counts, column types, join integrity across all 7 tables
+3. Filter cancer indication reports using the `indi` table and MedDRA terminology
+4. Identify fluorouracil records using LIKE pattern matching; enumerate name variants
+5. Normalize drug names — map brand names, salt variants, and combination strings to standard labels
+6. Join `drug`, `reac`, `indi`, `outc`, and `demo` tables on `primaryid`
+7. Aggregate reaction and outcome frequencies; remove noise indication terms
+8. Apply downsampling for balanced cross-drug comparisons in modeling workflows
 
 ---
 
-# Example Analyses
+## Notebooks
 
-Possible analyses performed on the dataset include:
-
-- Comparison of adverse reaction profiles across drug combinations
-- Frequency analysis of reported toxicities
-- Serious outcome rates across chemotherapy regimens
-- Logistic regression modeling of severe adverse events
-
-These analyses demonstrate how pharmacovigilance datasets can be used to investigate drug safety signals.
+| Notebook | Description |
+|---|---|
+| [explore_faers_schema.ipynb](notebooks/explore_faers_schema.ipynb) | Schema overview, table validation, row counts, and data quality checks |
+| [appendiceal_indication.ipynb](notebooks/appendiceal_indication.ipynb) | Cancer indication filtering; top drugs, reactions, and outcomes in the colorectal/appendiceal population |
+| [5_FU_explore.ipynb](notebooks/5_FU_explore.ipynb) | Fluorouracil EDA — drug name normalization, adverse reaction profiling, cross-regimen heatmap comparison |
+| [5_FU_ML.ipynb](notebooks/5_FU_ML.ipynb) | Predictive modeling of serious outcomes using fluorouracil report data *(in progress)* |
+| [Metformin_explore.ipynb](notebooks/Metformin_explore.ipynb) | Metformin adverse event analysis across formulations and combination therapies |
 
 ---
 
-# Project Structure
+## Project Structure
 
 ```
-FDA_FAERS
+FDA_FAERS/
 │
-├── notebooks
-│   ├── explore_faers_schema.ipynb        # Schema overview and table validation
-│   ├── appendiceal_indication.ipynb      # Cancer indication filtering and drug/reaction analysis
-│   ├── 5_FU_explore.ipynb                # Fluorouracil adverse event EDA
-│   ├── 5_FU_ML.ipynb                     # Fluorouracil ML modeling (in progress)
-│   └── Metformin_explore.ipynb           # Metformin adverse event EDA
+├── notebooks/
+│   ├── explore_faers_schema.ipynb
+│   ├── appendiceal_indication.ipynb
+│   ├── 5_FU_explore.ipynb
+│   ├── 5_FU_ML.ipynb
+│   └── Metformin_explore.ipynb
 │
-├── database
-│   └── faers.db                          # SQLite database (excluded from version control)
+├── database/
+│   └── faers.db                    # SQLite database (excluded from version control)
 │
-├── data
-│   ├── Dataset ASCII Downloads/          # Raw FAERS quarterly zip files (Q1-Q4 2024)
-│   └── Dataset ASCII Extracts/           # Extracted quarterly txt files
+├── data/
+│   ├── Dataset ASCII Downloads/    # Raw FAERS quarterly zip files (Q1–Q4 2024)
+│   └── Dataset ASCII Extracts/     # Extracted quarterly .txt files
 │
-├── python
-│   ├── build_database.py                 # Builds SQLite database from raw FAERS files
-│   ├── export_db_samples.py              # Exports sample CSVs for each table
-│   └── inspect_data.py                   # Data inspection utilities
+├── python/
+│   ├── build_database.py           # Builds SQLite DB from raw FAERS files
+│   ├── export_db_samples.py        # Exports sample CSVs for each table
+│   └── inspect_data.py             # Data inspection utilities
 │
-├── outputs
-│   └── db_sample_review/                 # Sample CSVs for each table
+├── outputs/
+│   └── db_sample_review/           # Sample CSVs for schema review
 │
-├── sql
-│   └── schema_inspection.sql             # SQL schema inspection queries
+├── sql/
+│   └── schema_inspection.sql       # Schema inspection queries
 │
 └── README.md
 ```
 
-Large database files are excluded from version control.
+> `faers.db` is excluded from version control due to file size. To reproduce: download FAERS 2024 quarterly ASCII files from the [FDA FAERS website](https://www.fda.gov/drugs/fda-adverse-event-reporting-system-faers) and run `python/build_database.py`.
 
 ---
 
-# Technologies Used
+## Tech Stack
 
-- Python
-- SQL
-- SQLite
-- Pandas
-- Matplotlib
-- Jupyter Notebook
-- Git / GitHub
+Python · SQL · SQLite · pandas · matplotlib · seaborn · Jupyter
 
 ---
 
-# Future Work
+## Planned Extensions
 
-Planned extensions to the analysis include:
-
-- Reporting Odds Ratio (ROR) calculations for formal signal detection
-- Demographic analysis — age, sex, and country breakdowns within cancer population
-- Dechallenge/rechallenge analysis for causal signal strength
-- Quarterly trend analysis using LAG window functions
-- Seaborn visualizations for drug-reaction heatmaps
-- Clustering of toxicity profiles across chemotherapy regimens
-- Logistic regression modeling of serious outcomes (DE, HO, LT)
-- Class balancing and predictive modeling in 5_FU_ML.ipynb
+- Reporting Odds Ratio (ROR) calculations for formal disproportionality signal detection
+- Demographic stratification — age, sex, and reporter country within cancer subpopulations
+- Dechallenge/rechallenge signal analysis
+- HIPEC agent profiling (oxaliplatin, mitomycin C) in peritoneal malignancy subgroup
+- Logistic regression modeling of serious outcomes (death, hospitalization, life-threatening)

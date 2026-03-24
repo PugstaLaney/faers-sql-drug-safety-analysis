@@ -14,5 +14,9 @@ __pycache__/
 # Notebook checkpoints
 .ipynb_checkpoints/
 
+# Practice/learning notebooks
+notebooks/sql_practice.ipynb
+notebooks/statistics_learning.ipynb
+
 # VSCode settings
 .vscode/
