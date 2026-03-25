@@ -74,13 +74,40 @@ Oxaliplatin and mitomycin C are the primary agents used in hyperthermic intraper
 
 ## Notebooks
 
+**Schema Overview**
+
 | Notebook | Description |
 |---|---|
-| [explore_faers_schema.ipynb](notebooks/explore_faers_schema.ipynb) | Schema overview, table validation, row counts, and data quality checks |
-| [appendiceal_indication.ipynb](notebooks/appendiceal_indication.ipynb) | Cancer indication filtering; top drugs, reactions, and outcomes in the colorectal/appendiceal population |
-| [5_FU_explore.ipynb](notebooks/5_FU_explore.ipynb) | Fluorouracil EDA — drug name normalization, adverse reaction profiling, cross-regimen heatmap comparison |
-| [5_FU_ML.ipynb](notebooks/5_FU_ML.ipynb) | Predictive modeling of serious outcomes using fluorouracil report data *(in progress)* |
-| [Metformin_explore.ipynb](notebooks/Metformin_explore.ipynb) | Metformin adverse event analysis across formulations and combination therapies |
+| [explore_faers_schema.ipynb](notebooks/explore_faers_schema.ipynb) | Schema overview, table validation, row counts, and data quality checks across all 7 FAERS tables |
+
+**Module 1 — Fluorouracil**
+
+| Notebook | Description |
+|---|---|
+| [01_5fu_explore.ipynb](notebooks/module_1_fluorouracil/01_5fu_explore.ipynb) | Drug name discovery, normalization of 33 variants, data quality checks, PS/SS role filtering, analysis-ready dataset construction |
+| [02_5fu_reactions.ipynb](notebooks/module_1_fluorouracil/02_5fu_reactions.ipynb) | Adverse reaction frequency profile and cross-regimen heatmap comparison (FOLFOX, FOLFIRI, FOLFIRINOX) |
+| [03_5fu_population.ipynb](notebooks/module_1_fluorouracil/03_5fu_population.ipynb) | Patient population characterization — treatment indications and demographics *(in progress)* |
+| [04_5fu_outcomes.ipynb](notebooks/module_1_fluorouracil/04_5fu_outcomes.ipynb) | Serious outcome distributions — death, hospitalization, life-threatening events by regimen *(in progress)* |
+| [05_5fu_statistics.ipynb](notebooks/module_1_fluorouracil/05_5fu_statistics.ipynb) | Reporting Odds Ratio (ROR) signal detection and outcome rate comparisons *(in progress)* |
+| [06_5fu_ml.ipynb](notebooks/module_1_fluorouracil/06_5fu_ml.ipynb) | Predictive modeling of serious outcomes *(in progress)* |
+
+**Module 2 — Colorectal Cancer HIPEC Agents**
+
+| Notebook | Description |
+|---|---|
+| *(in progress)* | Oxaliplatin and mitomycin C adverse event profiling within peritoneal malignancy subgroup |
+
+**Module 3 — Appendiceal Cancer**
+
+| Notebook | Description |
+|---|---|
+| [01_appendiceal_indication.ipynb](notebooks/module_3_appendiceal/appendiceal_indication.ipynb) | Cancer indication filtering; top drugs, reactions, and outcomes in the colorectal/appendiceal population |
+
+**Module 4 — Metformin**
+
+| Notebook | Description |
+|---|---|
+| [01_metformin_explore.ipynb](notebooks/module_4_metformin/Metformin_explore.ipynb) | Metformin adverse event analysis across formulations and combination therapies |
 
 ---
 
@@ -91,10 +118,18 @@ FDA_FAERS/
 │
 ├── notebooks/
 │   ├── explore_faers_schema.ipynb
-│   ├── appendiceal_indication.ipynb
-│   ├── 5_FU_explore.ipynb
-│   ├── 5_FU_ML.ipynb
-│   └── Metformin_explore.ipynb
+│   ├── module_1_fluorouracil/
+│   │   ├── 01_5fu_explore.ipynb
+│   │   ├── 02_5fu_reactions.ipynb
+│   │   ├── 03_5fu_population.ipynb
+│   │   ├── 04_5fu_outcomes.ipynb
+│   │   ├── 05_5fu_statistics.ipynb
+│   │   └── 06_5fu_ml.ipynb
+│   ├── module_2_colorectal_hipec/
+│   ├── module_3_appendiceal/
+│   │   └── appendiceal_indication.ipynb
+│   └── module_4_metformin/
+│       └── Metformin_explore.ipynb
 │
 ├── database/
 │   └── faers.db                    # SQLite database (excluded from version control)
