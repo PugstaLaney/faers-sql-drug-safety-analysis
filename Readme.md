@@ -8,67 +8,37 @@ Analysis of real-world adverse event data from the **FDA Adverse Event Reporting
 
 Colorectal and appendiceal cancers share core chemotherapy regimens — primarily fluorouracil-based combinations (FOLFOX, FOLFIRI, FOLFIRINOX) and, in peritoneal disease, HIPEC protocols using oxaliplatin or mitomycin C. Despite extensive clinical trial data on efficacy, real-world adverse event profiles in spontaneous reporting databases like FAERS offer a complementary signal — capturing drug combinations, indication patterns, and outcomes at population scale.
 
-This project applies pharmacovigilance methods to characterize the adverse event burden in this patient population, with analytical angles spanning chemotherapy toxicity, off-label prescribing, serious outcomes, and comorbidity drug exposures.
+This project applies pharmacovigilance methods to characterize the adverse event burden in this patient population, with analytical angles spanning chemotherapy toxicity, disproportionality signal detection, patient population characterization, serious outcomes, and indication-first rare cancer profiling.
 
-> **Note:** FAERS data represents *reported associations*, not confirmed causal relationships. All findings should be interpreted in the context of spontaneous reporting limitations.
+> **Note:** FAERS data represents *reported associations*, not confirmed causal relationships. All findings should be interpreted in the context of spontaneous reporting limitations including indication bias, reporting lag, and duplicate submissions.
 
 ---
 
 ## Key Findings
 
-- **13,000+ fluorouracil drug records** were identified across 2024 FAERS, requiring normalization of **33 distinct drug name variants** before analysis — illustrating the data quality challenges inherent to spontaneous reporting databases.
+- **13,000+ fluorouracil drug records** identified across 2024 FAERS, requiring normalization of **33 distinct drug name variants** — illustrating the data quality challenges inherent to spontaneous reporting databases.
 
-- **Diarrhoea and neutropenia** were the most consistently reported adverse events across all fluorouracil-containing regimens (monotherapy and combinations), with diarrhoea accounting for 806 total reports — consistent with the known toxicity profile and validating the signal detection approach.
+- **Diarrhoea and neutropenia** were the most consistently reported adverse events across all fluorouracil-containing regimens, with diarrhoea accounting for 555 reports in the PS/SS-filtered population — consistent with the known toxicity profile.
 
-- **"Off-label use" ranked 2nd** among all reported events for fluorouracil (698 reports), representing a clinically meaningful pharmacovigilance signal worth further investigation.
+- **Cardiotoxicity (ROR=15.0) and polyneuropathy (ROR=32.3)** were identified as statistically significant disproportionality signals via Reporting Odds Ratio analysis — cardiotoxicity being a clinically important and often underappreciated fluorouracil risk.
 
-- **Fluorouracil carried the highest hospitalization burden** among all chemotherapy drugs analyzed in the cancer population — 590 hospitalization outcomes vs. 127 deaths — more than bevacizumab, capecitabine, or irinotecan.
+- **Outcome distributions differed significantly across regimens** (χ²=118.1, df=9, p<0.0001). Monotherapy patients showed 32% more deaths than expected — likely reflecting patient selection (frail/end-stage patients ineligible for combination regimens) rather than drug toxicity.
 
-- **Appendiceal cancer-specific indications** (mucinous adenocarcinoma of appendix, pseudomyxoma peritonei) generated fewer than 12 adverse event reports each across the entire 2024 dataset — confirming the rarity of these diagnoses even at national reporting scale, and highlighting the limits of FAERS for orphan oncology indications.
+- **Colorectal cancer was the dominant reported indication** for fluorouracil (5,617 PS/SS reports). Off-label use ranked 2nd among all reported reactions (424 reports), representing a pharmacovigilance signal worth further investigation.
 
-- **Neuropathy peripheral** appeared prominently in both fluorouracil and oxaliplatin reports — expected given their combined use in FOLFOX, and a relevant finding for HIPEC protocols that also employ oxaliplatin.
+- **Appendiceal cancer generated only ~339 FAERS reports** across the full 2024 dataset — confirming the rarity of these diagnoses even at national reporting scale and highlighting the limits of spontaneous reporting for orphan oncology indications.
 
----
-
-## Analysis Angles
-
-**1. Colorectal & Appendiceal Cancer Population**
-
-Reports filtered using cancer-related MedDRA indication terms from the `indi` table, including:
-- Colon cancer / Colorectal cancer (all stages and metastatic variants)
-- Malignant peritoneal neoplasm / Metastases to peritoneum
-- Pseudomyxoma peritonei / Mucinous adenocarcinoma of appendix
-
-Within this population: top drugs by report volume, adverse reaction frequencies, serious outcome distributions, and per-drug toxicity comparisons across FOLFOX, FOLFIRI, and targeted therapies (bevacizumab, cetuximab, panitumumab).
-
-**2. Fluorouracil-Containing Regimens**
-
-Drug name normalization applied to consolidate 33+ brand, generic, and combination variants. Adverse reaction profiles compared across:
-- Fluorouracil monotherapy
-- FOLFOX (Fluorouracil + Leucovorin + Oxaliplatin)
-- FOLFIRI (Fluorouracil + Irinotecan + Leucovorin)
-- FOLFIRINOX (Fluorouracil + Irinotecan + Leucovorin + Oxaliplatin)
-
-**3. Metformin as a Comorbidity Drug**
-
-Diabetes is a common comorbidity in colorectal cancer patients. Metformin name variants identified and grouped; adverse reaction profiles compared across formulations and combinations (monotherapy, Metformin/Sitagliptin, Empagliflozin/Metformin) to characterize safety signals in this overlapping population.
-
-**4. HIPEC Agents (Planned)**
-
-Oxaliplatin and mitomycin C are the primary agents used in hyperthermic intraperitoneal chemotherapy (HIPEC) for peritoneal disease from appendiceal and colorectal primaries. Adverse event profiling for these agents within the peritoneal malignancy indication subgroup is planned.
+- **Mitomycin C had only 4 reports** in the appendiceal population despite being a primary HIPEC agent — likely reflecting underreporting of intraperitoneal chemotherapy administered in surgical rather than outpatient settings.
 
 ---
 
-## Data Processing Pipeline
+## Analytical Approach
 
-1. Build a relational SQLite database from FAERS 2024 quarterly ASCII datasets (Q1–Q4)
-2. Validate schema: row counts, column types, join integrity across all 7 tables
-3. Filter cancer indication reports using the `indi` table and MedDRA terminology
-4. Identify fluorouracil records using LIKE pattern matching; enumerate name variants
-5. Normalize drug names — map brand names, salt variants, and combination strings to standard labels
-6. Join `drug`, `reac`, `indi`, `outc`, and `demo` tables on `primaryid`
-7. Aggregate reaction and outcome frequencies; remove noise indication terms
-8. Apply downsampling for balanced cross-drug comparisons in modeling workflows
+This project uses two complementary frameworks:
+
+**Drug-first (Module 1):** Begin with a specific drug (fluorouracil), build a clean analysis population through name normalization and role code filtering, then characterize reactions, demographics, outcomes, and statistical signals for that population.
+
+**Indication-first (Module 3):** Begin with a specific cancer population (appendiceal cancer), identify all primaryids matching curated MedDRA indication terms, then ask what drugs were reported and what adverse events occurred. Appropriate for rare cancer populations where the disease — not a single drug — is the analytical anchor.
 
 ---
 
@@ -80,34 +50,36 @@ Oxaliplatin and mitomycin C are the primary agents used in hyperthermic intraper
 |---|---|
 | [explore_faers_schema.ipynb](notebooks/explore_faers_schema.ipynb) | Schema overview, table validation, row counts, and data quality checks across all 7 FAERS tables |
 
-**Module 1 — Fluorouracil**
+**Module 1 — Fluorouracil** ✓ Complete
+
+| Notebook | Focus | Key Output |
+|---|---|---|
+| [01_5fu_explore.ipynb](notebooks/module_1_fluorouracil/01_5fu_explore.ipynb) | Drug name normalization, role code filtering, route and reporter type analysis | 5,617-report `fluorouracil_analysis` table; 33 name variants consolidated |
+| [02_5fu_reactions.ipynb](notebooks/module_1_fluorouracil/02_5fu_reactions.ipynb) | Top adverse reactions; regimen-stratified symptom heatmap | Diarrhoea, neutropenia, nausea dominate; FOLFOX drives neuropathy signal |
+| [03_5fu_population.ipynb](notebooks/module_1_fluorouracil/03_5fu_population.ipynb) | Age, sex, country, indication profile | Median age 60–69; male predominance; colorectal cancer dominant indication |
+| [04_5fu_outcomes.ipynb](notebooks/module_1_fluorouracil/04_5fu_outcomes.ipynb) | Serious outcomes by regimen (DE/HO/LT/OT) | Hospitalization most common; FOLFIRINOX highest death proportion |
+| [05_5fu_statistics.ipynb](notebooks/module_1_fluorouracil/05_5fu_statistics.ipynb) | ROR disproportionality analysis; chi-square outcome comparison | Cardiotoxicity ROR=15.0, polyneuropathy ROR=32.3; p<0.0001 across regimens |
+
+**Module 2 — Colorectal Cancer HIPEC Agents** *(in progress)*
 
 | Notebook | Description |
 |---|---|
-| [01_5fu_explore.ipynb](notebooks/module_1_fluorouracil/01_5fu_explore.ipynb) | Drug name discovery, normalization of 33 variants, data quality checks, PS/SS role filtering, analysis-ready dataset construction |
-| [02_5fu_reactions.ipynb](notebooks/module_1_fluorouracil/02_5fu_reactions.ipynb) | Adverse reaction frequency profile and cross-regimen heatmap comparison (FOLFOX, FOLFIRI, FOLFIRINOX) |
-| [03_5fu_population.ipynb](notebooks/module_1_fluorouracil/03_5fu_population.ipynb) | Patient population characterization — treatment indications and demographics *(in progress)* |
-| [04_5fu_outcomes.ipynb](notebooks/module_1_fluorouracil/04_5fu_outcomes.ipynb) | Serious outcome distributions — death, hospitalization, life-threatening events by regimen *(in progress)* |
-| [05_5fu_statistics.ipynb](notebooks/module_1_fluorouracil/05_5fu_statistics.ipynb) | Reporting Odds Ratio (ROR) signal detection and outcome rate comparisons *(in progress)* |
-| [06_5fu_ml.ipynb](notebooks/module_1_fluorouracil/06_5fu_ml.ipynb) | Predictive modeling of serious outcomes *(in progress)* |
+| *(planned)* | Oxaliplatin and mitomycin C adverse event profiling within peritoneal malignancy subgroup |
 
-**Module 2 — Colorectal Cancer HIPEC Agents**
+**Module 3 — Appendiceal Cancer** *(in progress)*
 
-| Notebook | Description |
+| Notebook | Focus |
 |---|---|
-| *(in progress)* | Oxaliplatin and mitomycin C adverse event profiling within peritoneal malignancy subgroup |
-
-**Module 3 — Appendiceal Cancer**
-
-| Notebook | Description |
-|---|---|
-| [01_appendiceal_indication.ipynb](notebooks/module_3_appendiceal/appendiceal_indication.ipynb) | Cancer indication filtering; top drugs, reactions, and outcomes in the colorectal/appendiceal population |
+| [01_appendiceal_explore.ipynb](notebooks/module_3_appendiceal/01_appendiceal_explore.ipynb) | Indication term discovery, manual curation, `appendiceal_reports` table construction, drug landscape |
+| [02_appendiceal_reactions.ipynb](notebooks/module_3_appendiceal/02_appendiceal_reactions.ipynb) | Top adverse reactions in appendiceal cancer population *(planned)* |
+| [03_appendiceal_population.ipynb](notebooks/module_3_appendiceal/03_appendiceal_population.ipynb) | Patient demographics *(planned)* |
+| [04_appendiceal_outcomes.ipynb](notebooks/module_3_appendiceal/04_appendiceal_outcomes.ipynb) | Serious outcomes by top drug *(planned)* |
 
 **Module 4 — Metformin**
 
 | Notebook | Description |
 |---|---|
-| [01_metformin_explore.ipynb](notebooks/module_4_metformin/Metformin_explore.ipynb) | Metformin adverse event analysis across formulations and combination therapies |
+| [Metformin_explore.ipynb](notebooks/module_4_metformin/Metformin_explore.ipynb) | Metformin adverse event analysis across formulations and combination therapies |
 
 ---
 
@@ -126,8 +98,12 @@ FDA_FAERS/
 │   │   ├── 05_5fu_statistics.ipynb
 │   │   └── 06_5fu_ml.ipynb
 │   ├── module_2_colorectal_hipec/
+│   │   └── colorectal_hipec_explore.ipynb
 │   ├── module_3_appendiceal/
-│   │   └── appendiceal_indication.ipynb
+│   │   ├── 01_appendiceal_explore.ipynb
+│   │   ├── 02_appendiceal_reactions.ipynb
+│   │   ├── 03_appendiceal_population.ipynb
+│   │   └── 04_appendiceal_outcomes.ipynb
 │   └── module_4_metformin/
 │       └── Metformin_explore.ipynb
 │
@@ -158,14 +134,13 @@ FDA_FAERS/
 
 ## Tech Stack
 
-Python · SQL · SQLite · pandas · matplotlib · seaborn · Jupyter
+Python · SQL · SQLite · pandas · NumPy · SciPy · matplotlib · Jupyter · Git
 
 ---
 
 ## Planned Extensions
 
-- Reporting Odds Ratio (ROR) calculations for formal disproportionality signal detection
-- Demographic stratification — age, sex, and reporter country within cancer subpopulations
-- Dechallenge/rechallenge signal analysis
-- HIPEC agent profiling (oxaliplatin, mitomycin C) in peritoneal malignancy subgroup
+- Complete Module 3 appendiceal reactions, population, and outcomes notebooks
+- Module 2 HIPEC agent profiling (oxaliplatin, mitomycin C) in peritoneal malignancy subgroup
+- Combined fluoropyrimidine analysis including capecitabine (oral 5-FU prodrug)
 - Logistic regression modeling of serious outcomes (death, hospitalization, life-threatening)
