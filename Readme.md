@@ -6,7 +6,7 @@ Analysis of real-world adverse event data from the **FDA Adverse Event Reporting
 
 ## Background & Motivation
 
-Colorectal and appendiceal cancers share core chemotherapy regimens — primarily fluorouracil-based combinations (FOLFOX, FOLFIRI, FOLFIRINOX) and, in peritoneal disease, HIPEC protocols using oxaliplatin or mitomycin C. Despite extensive clinical trial data on efficacy, real-world adverse event profiles in spontaneous reporting databases like FAERS offer a complementary signal — capturing drug combinations, indication patterns, and outcomes at population scale.
+Colorectal and appendiceal cancers share core chemotherapy regimens, primarily fluorouracil-based combinations (FOLFOX, FOLFIRI, FOLFIRINOX) and, in peritoneal disease, HIPEC protocols using oxaliplatin or mitomycin C. Despite extensive clinical trial data on efficacy, real-world adverse event profiles in spontaneous reporting databases like FAERS offer a complementary signal capturing drug combinations, indication patterns, and outcomes at population scale.
 
 This project applies pharmacovigilance methods to characterize the adverse event burden in this patient population, with analytical angles spanning chemotherapy toxicity, disproportionality signal detection, patient population characterization, serious outcomes, and indication-first rare cancer profiling.
 
@@ -18,7 +18,7 @@ This project applies pharmacovigilance methods to characterize the adverse event
 
 - **13,000+ fluorouracil drug records** identified across 2024 FAERS, requiring normalization of **33 distinct drug name variants** — illustrating the data quality challenges inherent to spontaneous reporting databases.
 
-- **Diarrhoea and neutropenia** were the most consistently reported adverse events across all fluorouracil-containing regimens, with diarrhoea accounting for 555 reports in the PS/SS-filtered population — consistent with the known toxicity profile.
+- **Diarrhoea and neutropenia** were the most consistently reported adverse events across all fluorouracil-containing regimens, with diarrhoea accounting for 555 reports in the PS/SS-filtered population. Consistent with the known toxicity profile.
 
 - **Cardiotoxicity (ROR=15.0) and polyneuropathy (ROR=32.3)** were identified as statistically significant disproportionality signals via Reporting Odds Ratio analysis — cardiotoxicity being a clinically important and often underappreciated fluorouracil risk.
 
@@ -26,9 +26,9 @@ This project applies pharmacovigilance methods to characterize the adverse event
 
 - **Colorectal cancer was the dominant reported indication** for fluorouracil (5,617 PS/SS reports). Off-label use ranked 2nd among all reported reactions (424 reports), representing a pharmacovigilance signal worth further investigation.
 
-- **Appendiceal cancer generated only ~339 FAERS reports** across the full 2024 dataset — confirming the rarity of these diagnoses even at national reporting scale and highlighting the limits of spontaneous reporting for orphan oncology indications.
+- **Appendiceal cancer generated only ~339 FAERS reports** across the full 2024 dataset, confirming the rarity of these diagnoses even at national reporting scale and highlighting the limits of spontaneous reporting for orphan oncology indications.
 
-- **Mitomycin C had only 4 reports** in the appendiceal population despite being a primary HIPEC agent — likely reflecting underreporting of intraperitoneal chemotherapy administered in surgical rather than outpatient settings.
+- **Mitomycin C had only 4 reports** in the appendiceal population despite being a primary HIPEC agent. Likely reflects underreporting of intraperitoneal chemotherapy administered in surgical rather than outpatient settings.
 
 ---
 
