@@ -1,0 +1,7 @@
+reporter_code,reporter_type,reports
+MD,Medical Doctor,2735
+HP,Health Professional,1705
+PH,Pharmacist,472
+CN,Consumer/Patient,415
+,Other/Unknown,289
+LW,Other/Unknown,1
